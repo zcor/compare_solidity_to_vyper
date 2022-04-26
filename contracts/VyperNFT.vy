@@ -79,7 +79,6 @@ SUPPORTED_INTERFACES: constant(bytes4[5]) = [
 ]
 
 MAX_SUPPLY: constant(uint256) = 1000
-totalMinted: uint256
 NAME: immutable(String[32])
 SYMBOL: immutable(String[32])
 
@@ -332,7 +331,7 @@ def setApprovalForAll(_operator: address, _approved: bool):
 
 @external
 @payable
-def mint(_to: address) -> bool:
+def mint(_to: address, _tokenId: uint256) -> bool:
     """
     @dev Function to mint tokens
          Throws if `msg.sender` is not the minter.
@@ -344,13 +343,12 @@ def mint(_to: address) -> bool:
     # Throws if `msg.sender` is not the minter
     assert msg.sender == self.minter
     assert msg.value >= 100000000000000000
+    assert _tokenId < MAX_SUPPLY
 
     # Throws if `_to` is zero address
     assert _to != ZERO_ADDRESS
-    assert self.totalMinted < MAX_SUPPLY
     
     # Add NFT. Throws if `_tokenId` is owned by someone
-    _tokenId: uint256 = self.totalMinted
     self._addTokenTo(_to, _tokenId)
     log Transfer(ZERO_ADDRESS, _to, _tokenId)
 
